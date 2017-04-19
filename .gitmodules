@@ -1,0 +1,6 @@
+[submodule "externals/grpc"]
+	path = externals/grpc
+	url = https://github.com/grpc/grpc.git
+[submodule "externals/protoc-gen-doc"]
+	path = externals/protoc-gen-doc
+	url = https://github.com/estan/protoc-gen-doc.git

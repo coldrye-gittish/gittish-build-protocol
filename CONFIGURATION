@@ -1,0 +1,49 @@
+# Copyright 2017 Carsten Klein
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# package specific configuration
+GTS_DEPS="gittish-build-common"
+DPKG_DEPS="zlib1g-dev libtool autoconf qt5-qmake qt5-default libgflags-dev libgtest-dev clang libc++-dev"
+CMD_DEPS=""
+EXT_DEPS="grpc protoc-gen-doc"
+#EXT_DEPS=""
+# add additional GRPC plugins here
+EXT_CMD_DEPS="\
+${ROOT_DIR}/externals/grpc/bins/opt/protobuf/protoc \
+${ROOT_DIR}/externals/protoc-gen-doc/protoc-gen-doc \
+${ROOT_DIR}/externals/grpc/bins/opt/grpc_python_plugin \
+"
+
+
+# build functions for externals
+function build_ext_grpc() {
+  pushd ${ROOT_DIR}/externals/grpc
+  git submodule update --init --recursive
+  make clean
+  make || exit 1
+  popd
+}
+
+function build_ext_protoc_gen_doc() {
+  pushd ${ROOT_DIR}/externals/protoc-gen-doc
+  # make sure that the build works without the installed protobuf related packages
+	  git checkout protoc-gen-doc.pro
+	  git apply ${ROOT_DIR}/patches/protoc-gen-doc.pro.patch || exit 1
+  qmake || exit 1
+  export ROOT_DIR
+  make || exit 1
+  popd
+}
+
+# vim: expandtab:ts=2:sw=2:

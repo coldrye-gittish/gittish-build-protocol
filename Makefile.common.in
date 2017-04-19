@@ -1,0 +1,57 @@
+# Copyright 2017 Carsten Klein
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+ifndef __GTS_BUILD_PROTOCOL_COMMON__
+
+$(info include $(lastword $(MAKEFILE_LIST)))
+
+
+ifndef __GTS_BUILD_COMMON_COMMON__                                                              
+ifndef GTS_BUILD_COMMON                                                                         
+$(error must include <WORKSPACE_ROOT>/gittish-build-common/CONFIG.in)                           
+endif                                                                                           
+include $(GTS_BUILD_COMMON)/Makefile.common.in                                                  
+endif                                                                                           
+
+ifndef __SPACE
+$(error __SPACE helper not defined)
+endif
+
+ifndef GTS_BUILD_PROJECT
+$(error GTS_BUILD_PROJECT not defined, must include <WORKSPACE_ROOT>/<PROJECT_ROOT>/CONFIG.in)
+endif
+
+$(info including $(GTS_BUILD_PROJECT)/Makefile.proto.in)
+include $(GTS_BUILD_PROJECT)/Makefile.proto.in
+
+ifeq "" "$(PROTO_SRC)$(GRPC_SRC)"
+$(error both PROTO_SRC and GRPC_SRC are undefined, must define either of them or both)
+endif
+
+PROTO_SRC_DIR := $(GTS_BUILD_PROJECT)/src
+PROTO_INC_DIR += $(PROTO_SRC_DIR)
+PROTO_INC_PATH += $(PROTOBUF_SRC)
+PROTO_INC_PATH += $(PROTO_INC_DIR)
+PROTOC_PROTO_PATH_OPT := --proto_path=$(subst $(__SPACE),:,$(PROTO_INC_PATH))
+
+# define guard
+__GTS_BUILD_PROTOCOL_COMMON__ = 1
+
+else
+
+$(warning extraneous include of $(lastword $(MAKEFILE_LIST)))
+
+endif
+
+# vim: noexpandtab:ts=2:sw=2:

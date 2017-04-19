@@ -1,0 +1,17 @@
+diff --git a/protoc-gen-doc.pro b/protoc-gen-doc.pro
+index 38a35ce..ab40d30 100644
+--- a/protoc-gen-doc.pro
++++ b/protoc-gen-doc.pro
+@@ -18,9 +18,10 @@ lessThan(QT_MAJOR_VERSION, 5):error(This program requires Qt 5.x.)
+ linux {
+     # Use pkg-config to find libprotobuf.
+     CONFIG += link_pkgconfig
+-    PKGCONFIG = protobuf
++    #PKGCONFIG = protobuf
+ 
+-    LIBS += -lprotoc # Has no .pc, so add manually.
++    INCLUDEPATH += "${ROOT_DIR}/externals/grpc/third_party/protobuf/src/"
++    LIBS += -lprotoc -lprotobuf -L"${ROOT_DIR}/externals/grpc/third_party/protobuf/src/.libs/"
+ }
+ 
+ msvc|mac {
